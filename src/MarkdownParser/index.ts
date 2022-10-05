@@ -81,7 +81,6 @@ class MarkDownParser extends Parser {
           link,
           type: 1,
         };
-        debugger;
         parent?.children?.push(node);
       }
     }

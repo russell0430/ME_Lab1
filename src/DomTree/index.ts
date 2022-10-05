@@ -2,33 +2,64 @@ import { Node, Parser, acceptFunction, NodeOrNull } from "../Types";
 import { traverse } from "../Utils";
 class DomTree {
   rootNode: Node | null = null;
+  isInit: Boolean = false;
   public parser: Parser | null = null;
 
   public setParser(parser: Parser): void {
     this.parser = parser;
   }
   // parse file and get DomTree
-  public process(): void {
+  public init(): void {
     if (this.parser) {
       this.parser.parseContent();
       this.rootNode = this.parser.getContent();
     } else {
-      console.log(`no parser provided!`);
+      this.rootNode = {
+        type: 0,
+        depth: 0,
+        title: "rootNode",
+        link: null,
+        parent: null,
+        children: [],
+      };
     }
+    this.isInit = true;
   }
 
   build(): this {
     return this;
   }
 
-  public addTitle(param: string): this {
-    let args: string[];
-    if (param.includes("at")) {
-      args = param.split("at").map((arg) => arg.trim());
-    } else {
-      args = [param];
+  // need to upgrade!
+  public display(node?: Node): void {
+    const disNode = node || this.rootNode;
+    if (!disNode) {
+      console.log("can not display a null tree");
+      return;
     }
-    let flag = false;
+    console.log("|");
+    const dislplayFunc: acceptFunction = (node, children) => {
+      if (node !== this.rootNode) {
+        const prefix = " ".repeat((node.depth - 1) * 4) + "|---";
+        console.log(prefix);
+        const content =
+          node.type === 0 ? node.title : `${node.title}@${node.link}`;
+        console.log(`${" ".repeat(prefix.length)}${content}`);
+      }
+      return [node, children];
+    };
+    traverse(disNode, dislplayFunc);
+  }
+  // get a function and apply it on all nodes
+  public accept(func: acceptFunction): void {
+    if (this.rootNode) {
+      this.rootNode = traverse(this.rootNode, func);
+    } else {
+      throw new Error(`rootNode not found`);
+    }
+  }
+
+  public addNode(...args: string[]): void {
     if (args.length === 1) {
       this.rootNode &&
         this.rootNode.children &&
@@ -40,7 +71,7 @@ class DomTree {
           depth: 1,
           link: null,
         });
-      return this;
+      return;
     }
     const searchAndAdd: acceptFunction = (node, children) => {
       if (node.title === args[0]) {
@@ -57,45 +88,21 @@ class DomTree {
       return [node, null];
     };
     this.accept(searchAndAdd);
-    return this;
   }
-
-  // need to fix!
-  public display(): void {
-    const __num = 2;
-    const printArray: string[] = [];
-    let lengthArray: number[] = [0];
-    let lastIndexArray: number[] = [0];
-    const dislplayfunc: acceptFunction = (node, children) => {
-      switch (node.type) {
-        case -1:
-          break;
-        case 0:
-          // blank space
-          const prefix1 = " ".repeat(lengthArray[node.type - 1]);
-          console.log(`${prefix1}|`);
-          // '    --'
-          const prefix2 = `${prefix1}${"-".repeat(__num)}`;
-          // '    --title'
-          console.log(`${prefix2}${node.title}`);
-          lengthArray[node.type] = prefix2.length;
-          break;
-        case 1:
-          console.log();
-          // blank
-          break;
+  public deleteNode(...args: [0 | 1, string]): void {
+    const searchAndDel: acceptFunction = (node, children) => {
+      if (node.title === args[1] && args[0] == node.type) {
+        if (this.rootNode === node) {
+        } else {
+          node.parent?.children?.splice(
+            node.parent?.children?.indexOf(node),
+            1
+          );
+        }
       }
-      return [node, children];
+      return [node, null];
     };
-    // this.accept(dislplayfunc);
-  }
-  // get a function and apply it on all nodes
-  public accept(func: acceptFunction): void {
-    if (this.rootNode) {
-      this.rootNode = traverse(this.rootNode, func);
-    } else {
-      throw new Error(`rootNode not found`);
-    }
+    this.accept(searchAndDel);
   }
 }
 
