@@ -118,20 +118,25 @@ class DomTree {
       console.log("no params for delete ");
       return;
     }
+    // looks a little ugly :)
     const searchAndDel: acceptFunction = (node, children) => {
       if (node.title === args[0] && type === node.type) {
+        // you need to do two actions below to tell
+        // the traverse you want to  delete node
 
+        // 1. 
         node.parent?.children?.splice(node.parent?.children?.indexOf(node), 1);
-        // console.log(node.parent?.children);
-        const nnode=this.rootNode;
-        debugger;
-        // console.log(this.rootNode);
-        // debugger
+        // 2. 
+        node.parent = null;
+
+
+        // tell the traverse 
+        // no need to traverse node`s children
         return [node, null];
       }
       return [node, node.children];
     };
-    const nnode=this.rootNode;
+    const nnode = this.rootNode;
     debugger;
     this.accept(searchAndDel);
   }

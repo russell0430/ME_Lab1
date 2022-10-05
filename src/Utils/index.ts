@@ -5,11 +5,18 @@ import path from "path";
 // 之后使用函数调用者的children进行修改
 function traverse(node: Node, func: acceptFunction): Node {
   const [newNode, children] = func(node, node.children);
-  newNode.children = children?.map((child) => traverse(child, func)) || null;
+  newNode.children =
+    children
+      ?.map((child) => traverse(child, func))
+      // told to delete the node which parent is null
+      // get tortured for several hours
+      // fix the bug delete not work
+      // a little ugly :(
+      .filter((node) => node.parent != null) || null;
   return newNode;
 }
 
-function getTitleAndLink(sentence:string): [string, string] {
+function getTitleAndLink(sentence: string): [string, string] {
   const test = /\[(.*)\]\((.*)\)/g;
   const res = test.exec(sentence);
   if (!res || !res[1] || !res[2]) {

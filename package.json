@@ -8,7 +8,7 @@
     "dev":"npx ts-node ./src/main"
   },
   "keywords": [],
-  "author": "",
+  "author": "russ0430",
   "license": "ISC",
   "dependencies": {
     "ts-node": "^10.9.1"
