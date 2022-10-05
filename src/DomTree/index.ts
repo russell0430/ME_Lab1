@@ -59,49 +59,80 @@ class DomTree {
     }
   }
 
-  public addNode(...args: string[]): void {
+  public addNode({ type, args }: { type: 0 | 1; args: string[] }): void {
+    // console.log(args);
     if (args.length === 1) {
-      this.rootNode &&
-        this.rootNode.children &&
-        this.rootNode.children.push({
-          type: 0,
-          title: args[0],
-          parent: this.rootNode,
-          children: [],
-          depth: 1,
-          link: null,
-        });
+      if (type === 0) {
+        this.rootNode &&
+          this.rootNode.children &&
+          this.rootNode.children.push({
+            type: 0,
+            title: args[0],
+            parent: this.rootNode,
+            children: [],
+            depth: 1,
+            link: null,
+          });
+      } else {
+        console.log("can not add bookmark without location");
+      }
       return;
     }
-    const searchAndAdd: acceptFunction = (node, children) => {
-      if (node.title === args[0]) {
-        node.children &&
-          node.children.push({
-            type: 1,
-            title: args[0],
-            parent: node,
-            children: null,
-            depth: node.depth + 1,
-            link: args[1],
-          });
-      }
-      return [node, null];
-    };
+    let searchAndAdd: acceptFunction;
+    if (type === 0)
+      searchAndAdd = (node, children) => {
+        if (node.title === args[2]) {
+          node.children != null &&
+            node.children.push({
+              type,
+              title: args[0],
+              parent: node,
+              children: [],
+              depth: node.depth + 1,
+              link: null,
+            });
+        }
+        return [node, node.children];
+      };
+    else {
+      searchAndAdd = (node, children) => {
+        if (node.title === args[2]) {
+          const [title, link] = args[0].split("@");
+          node.children != null &&
+            node.children.push({
+              type,
+              title,
+              parent: node,
+              children: null,
+              depth: node.depth + 1,
+              link,
+            });
+        }
+        return [node, node.children];
+      };
+    }
     this.accept(searchAndAdd);
   }
-  public deleteNode(...args: [0 | 1, string]): void {
+  public deleteNode({ type, args }: { type: 0 | 1; args: string[] }): void {
+    if (!args || args.length === 0) {
+      console.log("no params for delete ");
+      return;
+    }
     const searchAndDel: acceptFunction = (node, children) => {
-      if (node.title === args[1] && args[0] == node.type) {
-        if (this.rootNode === node) {
-        } else {
-          node.parent?.children?.splice(
-            node.parent?.children?.indexOf(node),
-            1
-          );
-        }
+      if (node.title === args[0] && type === node.type) {
+
+        node.parent?.children?.splice(node.parent?.children?.indexOf(node), 1);
+        // console.log(node.parent?.children);
+        const nnode=this.rootNode;
+        debugger;
+        // console.log(this.rootNode);
+        // debugger
+        return [node, null];
       }
-      return [node, null];
+      return [node, node.children];
     };
+    const nnode=this.rootNode;
+    debugger;
     this.accept(searchAndDel);
   }
 }

@@ -15,7 +15,6 @@ class MarkDownParser extends Parser {
       .split("\r\n")
       .map((sentence) => sentence.trim())
       .filter((sentence) => sentence !== "");
-    // console.log(sentences);
     this.process(sentences);
   }
   public getContent(): NodeOrNull {

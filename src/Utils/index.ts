@@ -13,7 +13,7 @@ function getTitleAndLink(sentence:string): [string, string] {
   const test = /\[(.*)\]\((.*)\)/g;
   const res = test.exec(sentence);
   if (!res || !res[1] || !res[2]) {
-    throw new Error(`${sentence} not compatiable file format`);
+    throw new Error(`${sentence} not compatiable file format [title](link)`);
   }
   return [res[1], res[2]];
 }

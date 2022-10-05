@@ -10,25 +10,25 @@ function registerCommand(cac: CAC, tree: DomTree): void {
     console.log("i am testing command");
   });
   cac.registerCommand("add-title", (...args: string[]) => {
-    tree.addNode(...args);
+    tree.addNode({ type: 0, args });
   });
   cac.registerCommand("add-bookmark", (...args: string[]) => {
-    tree.addNode(...args);
+    tree.addNode({ type: 1, args });
   });
 
   cac.registerCommand("delete-title", (...args: string[]) => {
-    tree.deleteNode(0, args[0]);
+    tree.deleteNode({ type: 0, args });
   });
 
   cac.registerCommand("delete-bookmark", (...args: string[]) => {
-    tree.deleteNode(1, args[0]);
+    tree.deleteNode({ type: 1, args });
   });
 
   cac.registerCommand("open", (...args: string[]) => {
-    console.log(resolve(args[0]));
     if (args[0] && fs.existsSync(resolve(args[0]))) {
       const filePath = resolve(args[0]);
       tree.setParser(new MarkDownParser(filePath));
+      console.log(`open file ${filePath}`);
     } else {
       console.log("init a new tree");
     }
@@ -51,10 +51,10 @@ function registerCommand(cac: CAC, tree: DomTree): void {
     if (command.startsWith("add-")) {
       const arg = command.slice(4);
       const type = arg === "title" ? 0 : 1;
-      tree.deleteNode(type, args[0]);
+      tree.deleteNode({ type, args });
     } else if (command.startsWith("delete-")) {
       const arg = command.slice(7);
-      tree.addNode(...args);
+      tree.addNode({ type: arg === "title" ? 0 : 1, args });
     } else {
       console.log("illegal command");
       return;
@@ -69,7 +69,7 @@ function registerCommand(cac: CAC, tree: DomTree): void {
       return;
     }
     if (command.startsWith("add-")) {
-      tree.addNode(...args);
+      tree.addNode({ type: command.slice(4) === "title" ? 0 : 1, args });
     } else if (command.startsWith("delete-")) {
       // logical error
       // can not delete the same node twice
