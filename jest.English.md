@@ -6,6 +6,7 @@
 ### FP
 [JFP](https://www.cambridge.org/core/journals/journal-of-functional-programming)
 ### OOP
-### Games Impact
+### Games
+[GenshinImpact](https://ys.mihoyo.com/)
 ## need to read
 [Category Theory](http://www.appliedcategorytheory.org/what-is-applied-category-theory/)

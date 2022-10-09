@@ -143,7 +143,7 @@ describe("domTree test", () => {
     });
     tree.addNode({
       type: 1,
-      args: ["Genshin@https://ys.mihoyo.com/", "at", "Games"],
+      args: ["GenshinImpact@https://ys.mihoyo.com/", "at", "Games"],
     });
     if (tree.parser) {
       tree.parser.writeContent(outputFilePath);
