@@ -1,7 +1,7 @@
 import { Node, NodeOrNull, Parser } from "../Types";
 import { getTitleAndLink, traverse, writeFile, compose } from "../Utils";
 import fs from "fs";
-class MarkDownParser extends Parser {
+class MarkdownParser extends Parser {
   rootNode: NodeOrNull = null;
   constructor(private filePath: string) {
     super();
@@ -17,7 +17,10 @@ class MarkDownParser extends Parser {
       .filter((sentence) => sentence !== "");
     this.process(sentences);
   }
-  public getContent(): NodeOrNull {
+  public getContent(): Node {
+    if(!this.rootNode){
+      throw new Error('no content find');
+    }
     return this.rootNode;
   }
   // 将文件写回markdown
@@ -50,7 +53,7 @@ class MarkDownParser extends Parser {
     let parentArray: NodeOrNull[] = [null];
     for (let sentence of sentences) {
       if (sentence.startsWith("#")) {
-        let [hashTag, title] = sentence.split(" ");
+        let [hashTag,...title] = sentence.split(" ");
         let titleDepth = hashTag.length;
         const parent = parentArray[titleDepth - 1];
         // 对于hashtag,认为他的最近的上一级hashtag为他的父级
@@ -59,7 +62,7 @@ class MarkDownParser extends Parser {
           children: [],
           parent,
           link: null,
-          title,
+          title:title.join(" "),
           type: 0,
         };
         if (titleDepth === 1 && !this.rootNode) {
@@ -86,4 +89,4 @@ class MarkDownParser extends Parser {
   }
 }
 
-export { MarkDownParser };
+export { MarkdownParser };

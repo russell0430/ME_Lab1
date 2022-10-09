@@ -1,10 +1,10 @@
 import { Node, Parser, acceptFunction, NodeOrNull } from "../Types";
 import { traverse } from "../Utils";
 class DomTree {
-  rootNode: Node | null = null;
+  rootNode: NodeOrNull = null;
   isInit: Boolean = false;
   public parser: Parser | null = null;
-
+  /**Init should called by yourself */
   public setParser(parser: Parser): void {
     this.parser = parser;
   }
@@ -58,9 +58,16 @@ class DomTree {
       throw new Error(`rootNode not found`);
     }
   }
-
+  /**
+   * 
+   * @param param0 {
+   *  type:node的类型,branch or leaf
+   *  args :[title "at" location ] || [title] 
+   * }
+   * @returns 
+   */
   public addNode({ type, args }: { type: 0 | 1; args: string[] }): void {
-    // console.log(args);
+    // 参数只有一个,认为是branch在根文件
     if (args.length === 1) {
       if (type === 0) {
         this.rootNode &&
@@ -124,13 +131,12 @@ class DomTree {
         // you need to do two actions below to tell
         // the traverse you want to  delete node
 
-        // 1. 
+        // 1.
         node.parent?.children?.splice(node.parent?.children?.indexOf(node), 1);
-        // 2. 
+        // 2.
         node.parent = null;
 
-
-        // tell the traverse 
+        // tell the traverse
         // no need to traverse node`s children
         return [node, null];
       }

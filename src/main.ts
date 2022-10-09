@@ -1,7 +1,4 @@
 import { CAC } from "./CAC";
-import fs from "fs";
-import { DomTree } from "./DomTree";
-import { MarkDownParser } from "./MarkdownParser";
 import path from "path";
 import registerCommand from "./registerCommand";
 import createDomTree from "./createDom";

@@ -1,6 +1,6 @@
 import { CAC } from "./CAC";
 import { DomTree } from "./DomTree";
-import { MarkDownParser } from "./MarkdownParser";
+import { MarkdownParser } from "./MarkdownParser";
 import fs from "fs";
 import path from "path";
 const resolve = (dir: string): string => path.resolve(__dirname, "../", dir);
@@ -27,7 +27,7 @@ function registerCommand(cac: CAC, tree: DomTree): void {
   cac.registerCommand("open", (...args: string[]) => {
     if (args[0] && fs.existsSync(resolve(args[0]))) {
       const filePath = resolve(args[0]);
-      tree.setParser(new MarkDownParser(filePath));
+      tree.setParser(new MarkdownParser(filePath));
       console.log(`open file ${filePath}`);
     } else {
       console.log("init a new tree");

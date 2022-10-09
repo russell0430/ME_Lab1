@@ -1,9 +1,9 @@
 import { DomTree } from "./DomTree";
-import { MarkDownParser } from "./MarkdownParser";
+import { MarkdownParser } from "./MarkdownParser";
 function createDomTree(filePath?: string): DomTree {
   const tree = new DomTree();
   if (filePath) {
-    tree.setParser(new MarkDownParser(filePath));
+    tree.setParser(new MarkdownParser(filePath));
     console.log(`reading file ${filePath}`);
   }
   tree.init();
