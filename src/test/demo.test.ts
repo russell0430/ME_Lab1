@@ -1,5 +1,5 @@
 import { DomTree } from "../DomTree";
-import { Node, acceptFunction } from "../Types";
+import { Node, AcceptFunction } from "../Types";
 import { MarkdownParser } from "../MarkdownParser";
 import { traverse } from "../Utils";
 import path from "path";
@@ -15,7 +15,7 @@ describe("markdown parser test", () => {
   markdownParser.parseContent();
   const rootNode = markdownParser.getContent();
   test("test leaf node", () => {
-    const acceptFunc: acceptFunction = (node, children) => {
+    const acceptFunc: AcceptFunction = (node, children) => {
       if (node.type === 1) {
         expect(node.children).toBe(null);
         expect(node.link).not.toBe(null);
@@ -49,7 +49,7 @@ describe("markdown parser test", () => {
   // i find a bug below for parser
   // node`s title can not contain blank
   test("test branch node", () => {
-    const acceptFunc: acceptFunction = (node, children) => {
+    const acceptFunc: AcceptFunction = (node, children) => {
       if (node.type === 0) {
         let childrenLength: number = 0;
         let firstChild: string = "";
@@ -103,7 +103,7 @@ describe("domTree test", () => {
       type: 1,
       args: ["Genshin@https://ys.mihoyo.com/", "at", "Games"],
     });
-    const acceptFunc: acceptFunction = (node, children) => {
+    const acceptFunc: AcceptFunction = (node, children) => {
       if (node.title === "Games") {
         expect(node.parent?.title).toBe("reference");
       }
@@ -123,7 +123,7 @@ describe("domTree test", () => {
       type: 1,
       args: ["JFP"],
     });
-    const acceptFunc: acceptFunction = (node, children) => {
+    const acceptFunc: AcceptFunction = (node, children) => {
       if (node.title === "FP") {
         expect(node.children?.length).toBe(0);
       }
