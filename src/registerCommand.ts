@@ -80,10 +80,34 @@ function registerCommand(cac: CAC, tree: DomTree): void {
     cac.redo(command, args);
   });
 
+  cac.registerCommand("read-bookmark", (...args) => {
+    if (args.length === 0) {
+      console.log("need at least one param which is the bookmark")
+    }
+    const node = tree.searchNode({ type: 1, title: args[0] })
+    if (!node) {
+      console.log(`no bookmark called ${args[0]} found!`);
+      return;
+    }
+    node.visited = true;
+    console.log(`read bookmark ${node.title}`);
+  })
   cac.registerCommand("show-tree", () => {
     tree.display();
   });
 
-  cac.registerCommand("ls-tree", () => {});
+  cac.registerCommand("ls-tree", (...args) => {
+    if (args.length === 0) {
+      console.log("default show the whole tree");
+      tree.display();
+      return;
+    }
+    const node = tree.searchNode({ type: 0, title: args[0] });
+    if (!node) {
+      console.log(`no node called ${args[0]}`);
+      return;
+    }
+    tree.display(node)
+  });
 }
 export default registerCommand;

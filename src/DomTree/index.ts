@@ -1,4 +1,4 @@
-import { Node, Parser, acceptFunction, NodeOrNull } from "../Types";
+import { Node, Parser, AcceptFunction, NodeOrNull } from "../Types";
 import { traverse } from "../Utils";
 class DomTree {
   rootNode: NodeOrNull = null;
@@ -37,13 +37,15 @@ class DomTree {
       console.log("can not display a null tree");
       return;
     }
+    const displayRootNodeDepth = disNode.depth
     console.log("|");
-    const dislplayFunc: acceptFunction = (node, children) => {
+    if(disNode===this.rootNode) console.log(" ---")
+    const dislplayFunc: AcceptFunction = (node, children) => {
       if (node !== this.rootNode) {
-        const prefix = " ".repeat((node.depth - 1) * 4) + "|---";
+        const prefix = " ".repeat((node.depth - displayRootNodeDepth) * 4) + "|---";
         console.log(prefix);
         const content =
-          node.type === 0 ? node.title : `${node.title}@${node.link}`;
+          node.type === 0 ? node.title : `${node.title}@${node.link}${node.visited ? '[*]' : ''}`;
         console.log(`${" ".repeat(prefix.length)}${content}`);
       }
       return [node, children];
@@ -51,7 +53,7 @@ class DomTree {
     traverse(disNode, dislplayFunc);
   }
   // get a function and apply it on all nodes
-  public accept(func: acceptFunction): void {
+  public accept(func: AcceptFunction): void {
     if (this.rootNode) {
       this.rootNode = traverse(this.rootNode, func);
     } else {
@@ -85,7 +87,7 @@ class DomTree {
       }
       return;
     }
-    let searchAndAdd: acceptFunction;
+    let searchAndAdd: AcceptFunction;
     if (type === 0)
       searchAndAdd = (node, children) => {
         if (node.title === args[2]) {
@@ -126,10 +128,10 @@ class DomTree {
       return;
     }
     // looks a little ugly :)
-    const searchAndDel: acceptFunction = (node, children) => {
+    const searchAndDel: AcceptFunction = (node, children) => {
       if (node.title === args[0] && type === node.type) {
         // you need to do two actions below to tell
-        // the traverse you want to  delete node
+        // the traverse you want to delete node
 
         // 1.
         node.parent?.children?.splice(node.parent?.children?.indexOf(node), 1);
@@ -142,9 +144,19 @@ class DomTree {
       }
       return [node, node.children];
     };
-    const nnode = this.rootNode;
-    debugger;
+    // const nnode = this.rootNode;
     this.accept(searchAndDel);
+  }
+  searchNode({ type, title }: { type: number, title: string }): NodeOrNull {
+    let resNode: NodeOrNull = null;
+    const acceptFunc: AcceptFunction = (node, children) => {
+      if (node.title === title && type === node.type) {
+        resNode = node;
+      }
+      return [node, children];
+    }
+    this.accept(acceptFunc);
+    return resNode;
   }
 }
 

@@ -1,9 +1,9 @@
-import { Node, acceptFunction } from "../Types";
+import { Node, AcceptFunction } from "../Types";
 import fs from "fs";
 import path from "path";
 // 函数调用者自行决定是否处理children,以及如何处理children,
 // 之后使用函数调用者的children进行修改
-function traverse(node: Node, func: acceptFunction): Node {
+function traverse(node: Node, func: AcceptFunction): Node {
   const [newNode, children] = func(node, node.children);
   newNode.children =
     children

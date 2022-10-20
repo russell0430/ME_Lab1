@@ -8,6 +8,8 @@ interface Node {
   // 0 => not leaf
   // 1 => leaf
   type: -1 | 0 | 1;
+  // visited times
+  visited?:Boolean
 }
 abstract class Parser {
   public abstract parseContent(): void;
@@ -19,8 +21,8 @@ abstract class Parser {
 // 这里不想配置..
 type NodeOrNull = Node | null;
 
-type acceptFunction = (
+type AcceptFunction = (
   node: Node,
   children: Node[] | null
 ) => [Node, Node[] | null];
-export { Node, Parser, NodeOrNull, acceptFunction };
+export { Node, Parser, NodeOrNull, AcceptFunction };
