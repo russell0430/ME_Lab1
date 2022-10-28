@@ -11,8 +11,8 @@ const markdownFilePath = resolve("./jest.English.input.md");
 console.log(markdownFilePath);
 
 describe("markdown parser test", () => {
-  const markdownParser = new MarkdownParser(markdownFilePath);
-  markdownParser.parseContent();
+  const markdownParser = new MarkdownParser();
+  markdownParser.parseContent(markdownFilePath);
   const rootNode = markdownParser.getContent();
   test("test leaf node", () => {
     const acceptFunc: AcceptFunction = (node, children) => {
@@ -92,8 +92,8 @@ describe("markdown parser test", () => {
 describe("domTree test", () => {
   test("add node", () => {
     const tree = new DomTree();
-    tree.setParser(new MarkdownParser(markdownFilePath));
-    tree.init();
+    tree.setParser(new MarkdownParser());
+    tree.init(markdownFilePath);
 
     tree.addNode({
       type: 0,
@@ -116,8 +116,8 @@ describe("domTree test", () => {
   });
   test("delete node", () => {
     const tree = new DomTree();
-    tree.setParser(new MarkdownParser(markdownFilePath));
-    tree.init();
+    tree.setParser(new MarkdownParser());
+    tree.init(markdownFilePath);
 
     tree.deleteNode({
       type: 1,
@@ -134,8 +134,8 @@ describe("domTree test", () => {
   const outputFilePath = resolve("jest.English.md");
   test("write domTree file", () => {
     const tree = new DomTree();
-    tree.setParser(new MarkdownParser(markdownFilePath));
-    tree.init();
+    tree.setParser(new MarkdownParser());
+    tree.init(markdownFilePath);
 
     tree.addNode({
       type: 0,
@@ -145,8 +145,8 @@ describe("domTree test", () => {
       type: 1,
       args: ["GenshinImpact@https://ys.mihoyo.com/", "at", "Games"],
     });
-    if (tree.parser) {
-      tree.parser.writeContent(outputFilePath);
+    if (tree.parser && tree.rootNode) {
+      tree.parser.writeContent(tree.rootNode, outputFilePath);
       const outputFileContent = fs.readFileSync(outputFilePath, "utf-8");
       const answerFileContent = fs.readFileSync(
         resolve("jest.English.standard.md"),
@@ -155,4 +155,5 @@ describe("domTree test", () => {
       expect(outputFileContent).toBe(answerFileContent);
     }
   });
+
 });

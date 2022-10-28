@@ -1,35 +1,41 @@
 import { Node, NodeOrNull, Parser } from "../Types";
 import { getTitleAndLink, traverse, writeFile, compose } from "../Utils";
 import fs from "fs";
+
 class MarkdownParser extends Parser {
   rootNode: NodeOrNull = null;
-  constructor(private filePath: string) {
+  constructor() {
     super();
   }
-  public parseContent(): void {
-    if (!fs.existsSync(this.filePath))
-      throw new Error(`${this.filePath} does not exist!`);
+
+  public parseContent(filePath: string): void {
+    if (!fs.existsSync(filePath))
+      throw new Error(`${filePath} does not exist!`);
     const sentences = fs
-      .readFileSync(this.filePath, "utf-8")
+      .readFileSync(filePath, "utf-8")
       // 这里似乎是 '\r\n'
       .split("\r\n")
       .map((sentence) => sentence.trim())
       .filter((sentence) => sentence !== "");
     this.process(sentences);
   }
+
   public getContent(): Node {
-    if(!this.rootNode){
+    if (!this.rootNode) {
       throw new Error('no content find');
     }
     return this.rootNode;
   }
+
   // 将文件写回markdown
-  // need to fix!
-  public writeContent(filePath: string): void {
+
+  public writeContent(rootNode: Node, filePath: string): void {
+    this.rootNode = rootNode;
     if (!this.rootNode) {
       throw new Error("no rootNode detected");
     }
     let writePath = compose<String>(writeFile);
+    debugger
     const write = writePath(filePath);
     function writeFunc(
       node: Node,
@@ -46,6 +52,7 @@ class MarkdownParser extends Parser {
     traverse(this.rootNode, writeFunc);
     write();
   }
+
   private process(sentences: string[]): void {
     if (sentences.length === 0) return;
     let depth: number = 0;
@@ -53,7 +60,7 @@ class MarkdownParser extends Parser {
     let parentArray: NodeOrNull[] = [null];
     for (let sentence of sentences) {
       if (sentence.startsWith("#")) {
-        let [hashTag,...title] = sentence.split(" ");
+        let [hashTag, ...title] = sentence.split(" ");
         let titleDepth = hashTag.length;
         const parent = parentArray[titleDepth - 1];
         // 对于hashtag,认为他的最近的上一级hashtag为他的父级
@@ -62,7 +69,7 @@ class MarkdownParser extends Parser {
           children: [],
           parent,
           link: null,
-          title:title.join(" "),
+          title: title.join(" "),
           type: 0,
         };
         if (titleDepth === 1 && !this.rootNode) {

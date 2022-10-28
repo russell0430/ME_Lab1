@@ -29,7 +29,9 @@ function writeFile(filePath: string, ...fileContent: string[]): void {
   if (fs.existsSync(filePath)) {
     fs.rmSync(filePath);
   }
+  console.log("write")
   fs.writeFileSync(filePath, fileContent.join("\r\n"), "utf-8");
+  console.log("write")
 }
 // for writeFile
 // forgive me i just ignore types for compose :)
@@ -37,6 +39,7 @@ function compose<T>(func: Function) {
   let argsArray: T[] = [];
   function gongjuren(...args: T[]) {
     if (args.length > 0) {
+      console.log(args);
       argsArray.push(...args);
       return gongjuren;
     } else {

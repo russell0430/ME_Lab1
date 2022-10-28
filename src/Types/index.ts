@@ -12,9 +12,9 @@ interface Node {
   visited?:Boolean
 }
 abstract class Parser {
-  public abstract parseContent(): void;
+  public abstract parseContent(filePath:string): void;
   public abstract getContent(): NodeOrNull;
-  public abstract writeContent(filePath:string):void;
+  public abstract writeContent(rootNode:Node,filePath:string):void;
 }
 // ts可以通过设置自动认为Node可以为null
 // by ts.config.js
