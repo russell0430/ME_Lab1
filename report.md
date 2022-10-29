@@ -61,9 +61,9 @@ tree可以对书签栏的树进行一些操作,以下是函数
 
 - `registerCommand`,接受一个命令和一个函数,接受到相关命令后执行对应的函数
 - `run`,开始监听,获得命令以及参数并且执行
-- `getLastCommand`,获得上次的命令
 - `undo`,执行`undo`,修改`commandStack`状态
 - `redo`,执行`redo`,修改`commandStack`状态
+- ...
 
 ## 模式
 
@@ -238,33 +238,51 @@ class CAC {
     stdin.addListener("data", processInput);
   }
 
-  getLastCommand(): { command: string; args: string[] } {
-    const lastCommand = this.commandStack[this.commandStack.length - 1];
-    if (!lastCommand) {
-      console.log("no command execute before!");
-      return {
-        command: "",
-        args: [],
-      };
-    } else {
-      return {
-        command: lastCommand[0],
-        args: lastCommand[1],
-      };
+  // 给你相关参数,自己去写undo的执行
+  /**
+   * 
+   * @param command command is a function ,you can get (command:string,args:string[])
+   *                and return a boolean ,which mean if you want do continue 
+   *                exectue the command 
+   * @returns 
+   */
+  undo(command: (command: string, args: string[]) => Boolean): Boolean {
+    this.trackCommand = false;
+    try {
+      const [com, args] = this.commandStack[this.commandStackPointer]
+      if (command(com, args)) {
+        this.commandStackPointer -= 1
+        return true
+      }
+      // don not want to execute the command
+      else return false
+    } catch (e) {
+      // error
+      console.log(e)
+      return false
     }
   }
-
-  undo(): Boolean {
-    if (this.commandStack.length > 0) {
-      this.commandStack.pop();
-      return true;
-    } else return false;
+  // 同上,只不过函数里给的参数不同
+  redo(command: (command: string, args: string[]) => Boolean): Boolean {
+    this.trackCommand = false;
+    try {
+      if (this.commandStackPointer + 1 >= this.commandStack.length) {
+        throw new Error("no history command");
+      }
+      const [com, args] = this.commandStack[this.commandStackPointer + 1]
+      if (command(com, args)) {
+        this.commandStackPointer -= 1
+        return true
+      }
+      // don not want to execute the command
+      else return false
+    } catch (e) {
+      // error
+      console.log(e)
+      return false
+    }
   }
-
-  redo(command: string, args: string[]): Boolean {
-    this.commandStack.push([command, args]);
-    return true;
-  }
+  // ...
 }
 
 export { CAC };
@@ -277,20 +295,20 @@ export { CAC };
 function registerCommand(cac: CAC, tree: DomTree): void {
   cac.registerCommand("test", () => {
     console.log("i am testing command");
+    return {}
   });
   cac.registerCommand("add-title", (...args: string[]) => {
     tree.addNode({ type: 0, args });
+    return {}
   });
   cac.registerCommand("add-bookmark", (...args: string[]) => {
     tree.addNode({ type: 1, args });
+    return {}
   });
 
   cac.registerCommand("delete-title", (...args: string[]) => {
     tree.deleteNode({ type: 0, args });
-  });
-
-  cac.registerCommand("delete-bookmark", (...args: string[]) => {
-    tree.deleteNode({ type: 1, args });
+    return {}
   });
   // ...
 }

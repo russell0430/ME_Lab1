@@ -37,8 +37,8 @@ function registerCommand(cac: CAC, tree: DomTree): void {
       console.log(`open file ${filePath}`);
     } else {
       console.log("init a new tree");
+      tree.init();
     }
-    tree.init();
     return {}
   });
 

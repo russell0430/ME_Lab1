@@ -1,9 +1,0 @@
-# company
-## mhy
-[genshin](https://ys.mihoyo.com/)
-[bh3](https://www.bh3.com/)
-## tecent
-[LOL](https://lol.qq.com/main.shtml)
-[WZRY](https://pvp.qq.com/)
-## facebook
-[react](https://reactjs.org/)
