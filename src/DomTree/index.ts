@@ -55,7 +55,7 @@ class DomTree {
       return;
     }
     const displayRootNodeDepth = disNode.depth
-    if (disNode === this.rootNode) console.log("root")
+    if (disNode === this.rootNode) console.log(this.rootNode.title)
     const dislplayFunc: AcceptFunction = (node, children) => {
       if (node !== this.rootNode) {
         const prefix = " ".repeat((node.depth - displayRootNodeDepth) * 4) + "|---";
@@ -174,7 +174,11 @@ class DomTree {
         // the traverse you want to delete node
 
         // 1.
-        node.parent?.children?.splice(node.parent?.children?.indexOf(node), 1);
+        // the code below trigger bug,
+        // node.parent?.children?.splice(node.parent?.children?.indexOf(node), 1);
+        if (node.parent?.children) {
+          node.parent.children = node.parent.children.filter((v) => v !== node)
+        }
         // 2.
         node.parent = null;
         // tell the traverse
@@ -221,7 +225,7 @@ class DomTree {
     if (action === "add") {
       parent.children = parent.children?.filter(node => node !== child) || []
     } else {
-      parent.children = [...parent.children || [], child]
+      parent.children = [...(parent.children || []), child]
     }
   }
 
@@ -229,12 +233,14 @@ class DomTree {
     if (this.historyActionPointer >= this.historyAction.length) {
       return
     }
-    const [parent, child, action] = this.historyAction[this.historyActionPointer + 1];
-    this.historyActionPointer--
+    const [parent, child, action] = this.historyAction[this.historyActionPointer+1];
+    this.historyActionPointer++
     if (action === "add") {
-      parent.children = [...parent.children || [], child]
+      parent.children = [...(parent.children || []), child]
+      child.parent = parent
     } else {
       parent.children = parent.children?.filter(node => node !== child) || []
+      child.parent = null
     }
 
   }

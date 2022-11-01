@@ -25,7 +25,7 @@
 # later
 完善代码\
 看看类型,改一改private,public等,写的时候没太注意(主要是debug时不太方便..)\
-后续可以添加vue/react框架直接改成web项目,不过只自己动手搭过vue的使用webpack框架,react的应该还要使用babel解析jsx语法吧
+后续可以添加vue/react框架直接改成web项目.
 
 
 

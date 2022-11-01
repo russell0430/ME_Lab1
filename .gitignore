@@ -1,4 +1,5 @@
 /node_modules/
 test.ts
 /src/test/TEMP
-/src/test/*.test.ts
+/src/test/demo.test.ts
+report.pptx
